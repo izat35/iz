@@ -1,143 +1,78 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <h3>From 0turs0 to Adnan</h3>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>استبيان القلق - 120 سؤال</title>
+    <title>استبيان مع تحديد</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #000; /* الخلفية سوداء */
-            color: #fff; /* النص أبيض */
-            direction: rtl;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #000;
+            color: #fff;
             text-align: center;
-        }
-        .container {
-            max-width: 600px;
             padding: 20px;
-            background: #1a1a1a; /* لون خلفية القسم الداخلي */
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-        h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
+        select {
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
         }
-        .btn {
-            display: inline-block;
+        button {
             margin-top: 20px;
             padding: 10px 20px;
+            font-size: 16px;
             background-color: #4CAF50;
             color: white;
-            text-decoration: none;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-        .btn:hover {
+        button:hover {
             background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 id="questionText">مرحبًا بك في استبيان القلق</h1>
-        <form id="surveyForm">
-            <div id="optionsContainer"></div>
-        </form>
-        <button class="btn" id="nextButton" style="display: none;" onclick="showNextQuestion()">التالي</button>
-        <div id="result" style="display: none;">
-            <h2>نتائج الاستبيان</h2>
-            <p id="resultText"></p>
-        </div>
-    </div>
+    <h1>اختر مستوى قلقك</h1>
+    <form id="surveyForm">
+        <label for="anxietyLevel">كيف تشعر في هذا الموقف؟</label><br>
+        <select id="anxietyLevel" name="anxietyLevel">
+            <option value="">-- اختر مستوى القلق --</option>
+            <option value="هادئ">هادئ</option>
+            <option value="قليل من القلق">قليل من القلق</option>
+            <option value="قلق">قلق</option>
+            <option value="قلق جداً">قلق جداً</option>
+            <option value="مضطرب">مضطرب</option>
+        </select><br>
+
+        <button type="button" onclick="submitAnswer()">إرسال</button>
+    </form>
+    <p id="result"></p>
+
     <script>
-        // قائمة بأسئلة متنوعة
-        const questions = [
-            "هل تواجه صعوبة في التركيز أثناء الدراسة؟",
-            "هل تشعر بالقلق بشأن الامتحانات؟",
-            "هل تجد صعوبة في النوم بسبب التفكير المستمر؟",
-            "هل تشعر بالتوتر في المواقف الاجتماعية؟",
-            "هل تشعر بالإرهاق عند التفكير في المهام المستقبلية؟",
-            "هل تعاني من القلق أثناء السفر أو التنقل؟",
-            "هل يؤثر القلق على إنتاجيتك اليومية؟",
-            "هل تجد صعوبة في الاسترخاء بعد يوم طويل؟",
-            "هل تفكر كثيرًا في الماضي وتشعر بالندم؟",
-            "هل القلق يمنعك من اتخاذ قرارات مهمة؟",
-            // أضف المزيد من الأسئلة حتى تصل إلى 120 سؤالًا
-        ];
+        function submitAnswer() {
+            // جلب القيمة المختارة من القائمة المنسدلة
+            const selectedValue = document.getElementById("anxietyLevel").value;
 
-        // إذا لم تكن قائمة الأسئلة كافية، كررها لتصل إلى 120
-        while (questions.length < 120) {
-            questions.push(...questions); // إضافة نسخ من الأسئلة الحالية
-        }
-        questions.length = 120; // تحديد العدد النهائي
+            // تحديد عنصر الفقرة لعرض النتيجة
+            const resultElement = document.getElementById("result");
 
-        const options = ["أبداً", "قليلاً", "أحياناً", "غالباً", "دائماً"];
-        let currentQuestionIndex = 0;
-        let totalScore = 0;
-
-        function showNextQuestion() {
-            const selectedOption = document.querySelector('input[name="qOption"]:checked');
-            if (selectedOption) {
-                totalScore += parseInt(selectedOption.value);
-                currentQuestionIndex++;
-                if (currentQuestionIndex < questions.length) {
-                    renderQuestion();
-                } else {
-                    showResult();
-                }
+            // التحقق إذا كان المستخدم قد اختار شيئًا
+            if (selectedValue) {
+                resultElement.innerText = `لقد اخترت: ${selectedValue}`;
             } else {
-                alert("يرجى اختيار إجابة قبل المتابعة.");
+                resultElement.innerText = "الرجاء اختيار مستوى القلق قبل الإرسال.";
             }
         }
-
-        function renderQuestion() {
-            document.getElementById('nextButton').style.display = "none"; // إخفاء زر التالي مؤقتًا
-            const questionText = document.getElementById('questionText');
-            const optionsContainer = document.getElementById('optionsContainer');
-            questionText.innerText = questions[currentQuestionIndex];
-            optionsContainer.innerHTML = options
-                .map((option, index) => `
-                    <label>
-                        <input type="radio" name="qOption" value="${index}">
-                        ${option}
-                    </label><br>
-                `)
-                .join('');
-            document.getElementById('nextButton').style.display = "inline-block"; // عرض زر التالي
-        }
-
-        function showResult() {
-            const resultDiv = document.getElementById('result');
-            const resultText = document.getElementById('resultText');
-            const questionContainer = document.querySelector('.container');
-
-            let message = "";
-            if (totalScore <= questions.length * 1) {
-                message = "مستوى القلق منخفض. حالتك جيدة، استمر على هذا المنوال!";
-            } else if (totalScore <= questions.length * 2) {
-                message = "مستوى القلق متوسط. قد تحتاج إلى تنظيم وقتك بشكل أفضل.";
-            } else if (totalScore <= questions.length * 3) {
-                message = "مستوى القلق مرتفع. حاول طلب الدعم من الأصدقاء أو العائلة.";
-            } else {
-                message = "مستوى القلق مرتفع جداً. يفضل استشارة متخصص للمساعدة.";
-            }
-
-            questionContainer.style.display = "none";
-            resultDiv.style.display = "block";
-            resultText.innerText = `إجمالي النقاط: ${totalScore}. ${message}`;
-        }
-
-        // عرض السؤال الأول عند تحميل الصفحة
-        renderQuestion();
     </script>
 </body>
 </html>
