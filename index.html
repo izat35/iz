@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اختبار التقييم النهائي</title>
+    <title>اختبار التقييم الشخصي</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,13 +11,18 @@
             color: #fff;
             text-align: center;
             padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
         }
         .question-container {
             margin-top: 20px;
         }
         .question {
-            font-size: 18px;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 20px;
         }
         select {
             padding: 10px;
@@ -38,6 +43,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            width: 100%;
         }
         button:hover {
             background-color: #45a049;
@@ -46,36 +52,31 @@
             margin-top: 20px;
             font-size: 18px;
             font-weight: bold;
+            color: #FFD700;
         }
     </style>
 </head>
 <body>
-    <h1>اختبار التقييم النهائي</h1>
-    <div id="question-container">
-        <p id="current-question" class="question"></p>
-        <select id="answer">
-            <option value="">-- اختر إجابة --</option>
-            <option value="1">أبداً</option>
-            <option value="2">نادرًا</option>
-            <option value="3">أحيانًا</option>
-            <option value="4">غالبًا</option>
-            <option value="5">دائمًا</option>
-        </select>
-        <button onclick="nextQuestion()">السؤال التالي</button>
+    <div class="container">
+        <h1>اختبار التقييم الشخصي</h1>
+        <div id="question-container">
+            <p id="current-question" class="question"></p>
+            <select id="answer">
+                <option value="">-- اختر إجابة --</option>
+                <option value="1">أبدًا</option>
+                <option value="2">نادرًا</option>
+                <option value="3">أحيانًا</option>
+                <option value="4">غالبًا</option>
+                <option value="5">دائمًا</option>
+            </select>
+            <button onclick="nextQuestion()">السؤال التالي</button>
+        </div>
+        <p id="result"></p>
     </div>
-    <p id="result"></p>
 
     <script>
         // الأسئلة
-        const questions = [
-            "السؤال 1: هل تشعر بالقلق في المواقف اليومية؟",
-            "السؤال 2: هل تواجه صعوبة في النوم؟",
-            "السؤال 3: هل تجد صعوبة في التركيز؟",
-            "السؤال 4: هل تشعر بالتوتر عندما تكون محاطًا بالآخرين؟",
-            "السؤال 5: هل تشعر بالإحباط عند مواجهة المشاكل؟",
-            // ... أكمل بإضافة المزيد من الأسئلة حتى تصل إلى 100 سؤال
-            "السؤال 100: هل تشعر بالسعادة عند إنجاز المهام الصعبة؟"
-        ];
+        const questions = Array.from({length: 120}, (_, i) => `السؤال ${i + 1}: كيف تقيم هذا الموقف؟`);
 
         let currentQuestionIndex = 0;
         let totalScore = 0;
@@ -105,14 +106,28 @@
                 document.getElementById("answer").value = ""; // إعادة ضبط الاختيار
             } else {
                 // عرض النتيجة النهائية
-                const resultElement = document.getElementById("result");
-                document.getElementById("question-container").style.display = "none"; // إخفاء الأسئلة
-                const finalScore = totalScore;
-                const maxScore = questions.length * 5; // الحد الأقصى للدرجة
-                const percentage = Math.round((finalScore / maxScore) * 100);
-
-                resultElement.innerText = `لقد أكملت الاختبار! نتيجتك: ${percentage}%`;
+                showFinalResult();
             }
+        }
+
+        function showFinalResult() {
+            const resultElement = document.getElementById("result");
+            document.getElementById("question-container").style.display = "none"; // إخفاء الأسئلة
+
+            // تحليل النتيجة بناءً على الدرجة
+            const averageScore = totalScore / questions.length;
+
+            let personalityResult = "";
+            if (averageScore <= 2) {
+                personalityResult = "حالتك الشخصية تحتاج إلى تحسين كبير. ننصحك بالتركيز على تطوير مهارات الاسترخاء ومواجهة الضغوط.";
+            } else if (averageScore <= 3.5) {
+                personalityResult = "حالتك الشخصية متوسطة. يمكنك تحسين بعض الجوانب بالتفكير الإيجابي وممارسة التأمل.";
+            } else {
+                personalityResult = "حالتك الشخصية ممتازة! لديك مهارات قوية في مواجهة المواقف اليومية.";
+            }
+
+            resultElement.innerText = `لقد أكملت الاختبار! 
+            التقييم النهائي: ${personalityResult}`;
         }
     </script>
 </body>
