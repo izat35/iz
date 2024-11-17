@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>استبيان مع تحديد</title>
+    <title>اختبار التقييم النهائي</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,14 +12,22 @@
             text-align: center;
             padding: 20px;
         }
+        .question-container {
+            margin-top: 20px;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
         select {
             padding: 10px;
-            margin-top: 10px;
             font-size: 16px;
             background-color: #222;
             color: #fff;
             border: 1px solid #555;
             border-radius: 5px;
+            width: 100%;
+            margin-bottom: 20px;
         }
         button {
             margin-top: 20px;
@@ -42,35 +50,68 @@
     </style>
 </head>
 <body>
-    <h1>اختر مستوى قلقك</h1>
-    <form id="surveyForm">
-        <label for="anxietyLevel">كيف تشعر في هذا الموقف؟</label><br>
-        <select id="anxietyLevel" name="anxietyLevel">
-            <option value="">-- اختر مستوى القلق --</option>
-            <option value="هادئ">هادئ</option>
-            <option value="قليل من القلق">قليل من القلق</option>
-            <option value="قلق">قلق</option>
-            <option value="قلق جداً">قلق جداً</option>
-            <option value="مضطرب">مضطرب</option>
-        </select><br>
-
-        <button type="button" onclick="submitAnswer()">إرسال</button>
-    </form>
+    <h1>اختبار التقييم النهائي</h1>
+    <div id="question-container">
+        <p id="current-question" class="question"></p>
+        <select id="answer">
+            <option value="">-- اختر إجابة --</option>
+            <option value="1">أبداً</option>
+            <option value="2">نادرًا</option>
+            <option value="3">أحيانًا</option>
+            <option value="4">غالبًا</option>
+            <option value="5">دائمًا</option>
+        </select>
+        <button onclick="nextQuestion()">السؤال التالي</button>
+    </div>
     <p id="result"></p>
 
     <script>
-        function submitAnswer() {
-            // جلب القيمة المختارة من القائمة المنسدلة
-            const selectedValue = document.getElementById("anxietyLevel").value;
+        // الأسئلة
+        const questions = [
+            "السؤال 1: هل تشعر بالقلق في المواقف اليومية؟",
+            "السؤال 2: هل تواجه صعوبة في النوم؟",
+            "السؤال 3: هل تجد صعوبة في التركيز؟",
+            "السؤال 4: هل تشعر بالتوتر عندما تكون محاطًا بالآخرين؟",
+            "السؤال 5: هل تشعر بالإحباط عند مواجهة المشاكل؟",
+            // ... أكمل بإضافة المزيد من الأسئلة حتى تصل إلى 100 سؤال
+            "السؤال 100: هل تشعر بالسعادة عند إنجاز المهام الصعبة؟"
+        ];
 
-            // تحديد عنصر الفقرة لعرض النتيجة
-            const resultElement = document.getElementById("result");
+        let currentQuestionIndex = 0;
+        let totalScore = 0;
 
-            // التحقق إذا كان المستخدم قد اختار شيئًا
-            if (selectedValue) {
-                resultElement.innerText = `لقد اخترت: ${selectedValue}`;
+        // عرض السؤال الأول
+        document.getElementById("current-question").innerText = questions[currentQuestionIndex];
+
+        function nextQuestion() {
+            // جلب الإجابة المختارة
+            const answerValue = document.getElementById("answer").value;
+
+            // التحقق من أن المستخدم اختار إجابة
+            if (!answerValue) {
+                alert("الرجاء اختيار إجابة قبل المتابعة.");
+                return;
+            }
+
+            // إضافة الإجابة إلى الدرجة الكلية
+            totalScore += parseInt(answerValue);
+
+            // الانتقال إلى السؤال التالي
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                // تحديث السؤال الحالي
+                document.getElementById("current-question").innerText = questions[currentQuestionIndex];
+                document.getElementById("answer").value = ""; // إعادة ضبط الاختيار
             } else {
-                resultElement.innerText = "الرجاء اختيار مستوى القلق قبل الإرسال.";
+                // عرض النتيجة النهائية
+                const resultElement = document.getElementById("result");
+                document.getElementById("question-container").style.display = "none"; // إخفاء الأسئلة
+                const finalScore = totalScore;
+                const maxScore = questions.length * 5; // الحد الأقصى للدرجة
+                const percentage = Math.round((finalScore / maxScore) * 100);
+
+                resultElement.innerText = `لقد أكملت الاختبار! نتيجتك: ${percentage}%`;
             }
         }
     </script>
